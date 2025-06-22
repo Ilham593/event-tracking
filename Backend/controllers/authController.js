@@ -1,6 +1,6 @@
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken"
+import jwt from "jsonwebtoken";
 export const register = async (req, res) => {
   try {
     const name = req.body.name?.trim();
@@ -39,7 +39,6 @@ export const login = async (req, res) => {
   try {
     const email = req.body.email?.trim();
     const password = req.body.password?.trim();
-
     if (!email || !password) {
       return res.status(400).json({
         msg: "mohon isi email dan password",
@@ -71,6 +70,7 @@ export const login = async (req, res) => {
     res.json({
       msg: "berhasil login",
       token,
+      role: user.role
     });
   } catch (err) {
     res.status(500).json({ msg: "gagal login" });
