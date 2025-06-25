@@ -1,3 +1,4 @@
+// import paket dari mongose unutk buat modeling
 import mongoose, { Schema } from "mongoose";
 
 const UserSchema = new Schema(
@@ -10,6 +11,7 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
+      uniqe: true
     },
 
     password: {
@@ -23,9 +25,11 @@ const UserSchema = new Schema(
     },
   },
   {
+    // otomasit menambahkan 2 field( created dan update)
     timestamps: true,
   }
 );
 
+// membuat modeluser
 const User = mongoose.model("User", UserSchema);
 export default User;
