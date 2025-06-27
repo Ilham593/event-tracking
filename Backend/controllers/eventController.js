@@ -6,13 +6,10 @@ export const getAllEvents = async (req, res) => {
 
     // selalu kirim array, meskipun kosong
     res.status(200).json(events);
-
   } catch (err) {
     res.status(500).json({ msg: "gagal mengambil data", error: err.message });
   }
 };
-
-
 
 export const getEventDetail = async (req, res) => {
   try {
@@ -51,9 +48,10 @@ export const createEvent = async (req, res) => {
       image,
     });
 
-    res.json({
-      postevent,
-    });
+    res.status(201).json({
+      msg: 'berhasi di buat',
+      postevent
+    })
   } catch (err) {
     res.status(500).json({ msg: "failed", error: err.message });
   }

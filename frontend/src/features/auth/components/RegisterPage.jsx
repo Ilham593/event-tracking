@@ -40,80 +40,97 @@ function Register() {
     dispatch(registerUser(formData))
       .unwrap()
       .then(() => {
-        navigate('/login')
+        navigate("/login");
       })
       .catch((err) => {
-        alert(err?.msg)
-      })
+        alert(err?.msg);
+      });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="flex flex-col md:flex-row gap-8 max-w-7xl w-full xs:items-center">
-        {/* logo */}
-        <div className="flex-1 flex justify-center items-center">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-100 to-blue-50 flex items-center justify-center px-4 py-10 transition-all duration-500 ease-in-out">
+      <div className="flex flex-col md:flex-row gap-10 max-w-6xl w-full items-center animate-fade-in-up">
+        {/* Image Section */}
+        <div className="flex-1 flex justify-center">
           <img
             src={heroLogin}
             alt="hero login"
-            className="rounded-xl max-w-full h-auto object-contain"
+            className="rounded-xl w-full max-w-md transition-transform duration-500 hover:scale-105 shadow-xl"
           />
         </div>
 
-        {/* form */}
-        <div className="flex-1 max-w-md bg-white p-8 rounded-lg shadow-md w-full">
-          <h1 className="text-center text-2xl font-semibold mb-6">
-            Silakan Daftar
+        {/* Register Form */}
+        <div className="flex-1 max-w-md w-full bg-white/90 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-indigo-100 transition-all duration-300 hover:shadow-indigo-200">
+          <h1 className="text-3xl font-bold text-center text-gray-800 mb-6 tracking-wide">
+            Buat Akun Baru 📝
           </h1>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="name" className="font-medium">
-                name
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Name */}
+            <div>
+              <label
+                htmlFor="name"
+                className="block mb-1 font-medium text-gray-700"
+              >
+                Nama Lengkap
               </label>
               <input
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                 type="text"
                 name="name"
                 id="name"
-                placeholder="Masukkan nama"
+                placeholder="Masukkan nama lengkap"
                 value={formData.name}
                 onChange={handleChange}
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="email" className="font-medium">
+
+            {/* Email */}
+            <div>
+              <label
+                htmlFor="email"
+                className="block mb-1 font-medium text-gray-700"
+              >
                 Email
               </label>
               <input
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                 type="email"
                 name="email"
                 id="email"
-                placeholder="Masukkan email"
+                placeholder="contoh@email.com"
                 value={formData.email}
                 onChange={handleChange}
               />
             </div>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="password" className="font-medium">
+            {/* Password */}
+            <div>
+              <label
+                htmlFor="password"
+                className="block mb-1 font-medium text-gray-700"
+              >
                 Password
               </label>
               <input
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-indigo-400 transition"
                 type="password"
                 name="password"
                 id="password"
-                placeholder="Masukkan password"
+                placeholder="••••••••"
                 value={formData.password}
                 onChange={handleChange}
               />
             </div>
 
+            {/* Submit Button */}
             <button
               disabled={loading}
               type="submit"
-              className={`w-full bg-blue-600 p-3 rounded-md text-white uppercase font-semibold flex justify-center items-center transition ${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+              className={`w-full bg-indigo-600 text-white p-3 rounded-lg font-semibold tracking-wide flex justify-center items-center transition-all duration-300 ${
+                loading
+                  ? "opacity-60 cursor-not-allowed"
+                  : "hover:bg-indigo-700"
               }`}
             >
               {loading ? (
@@ -145,12 +162,17 @@ function Register() {
               )}
             </button>
 
-            {error && <p className="text-red-500">{error}</p>}
-            <p className="text-center">
-              Anda sudah mempunyai Akun?
-              <Link to="/login" className="text-blue-500">
-                {" "}
-                Login
+            {error && (
+              <p className="text-red-500 text-sm text-center">{error}</p>
+            )}
+
+            <p className="text-sm text-center text-gray-600">
+              Sudah punya akun?
+              <Link
+                to="/login"
+                className="text-indigo-500 hover:underline ml-1"
+              >
+                Login di sini
               </Link>
             </p>
           </form>

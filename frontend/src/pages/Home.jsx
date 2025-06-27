@@ -1,10 +1,9 @@
-import EventsList from '../features/events/EventsList'
+import EventsList from "../features/events/components/EventsList"
+
 function Home() {
 
   return (
-    <div>
-      <EventsList />
-    </div>
+    <EventsList />
   )
 }
 

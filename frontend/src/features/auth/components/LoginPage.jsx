@@ -38,72 +38,77 @@ function LoginPage() {
       });
   };
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50">
-      <div className="flex flex-col md:flex-row gap-8 max-w-7xl w-full xs:items-center">
-        {/* logo */}
-        <div className="flex-1 flex justify-center items-center">
-          <img
-            src={heroLogin}
-            alt="hero login"
-            className="rounded-xl max-w-full h-auto object-contain"
-          />
-        </div>
+  <div className="min-h-screen bg-gradient-to-tr from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-10 transition-all duration-500 ease-in-out">
+    <div className="flex flex-col md:flex-row gap-10 max-w-6xl w-full items-center animate-fade-in-up">
+      {/* Image */}
+      <div className="flex-1 flex justify-center">
+        <img
+          src={heroLogin}
+          alt="hero login"
+          className="rounded-xl w-full max-w-md transition-transform duration-500 hover:scale-105 shadow-xl"
+        />
+      </div>
 
-        {/* form */}
-        <div className="flex-1 max-w-md bg-white p-8 rounded-lg shadow-md w-full">
-          <h1 className="text-center text-2xl font-semibold mb-6">
-            Silakan Login
-          </h1>
-          <form className="space-y-4" onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-1">
-              <label htmlFor="email" className="font-medium">
-                Email
-              </label>
-              <input
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="email"
-                name="email"
-                id="email"
-                placeholder="Masukkan email"
-                value={formData.email}
-                onChange={handleChange}
-              />
-            </div>
+      {/* Login Form */}
+      <div className="flex-1 max-w-md w-full bg-white/90 backdrop-blur-md p-8 rounded-xl shadow-2xl border border-blue-100 transition-all duration-300 hover:shadow-blue-300">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-6 tracking-wide">
+          Selamat Datang 👋
+        </h1>
 
-            <div className="flex flex-col gap-1">
-              <label htmlFor="password" className="font-medium">
-                Password
-              </label>
-              <input
-                className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                type="password"
-                name="password"
-                id="password"
-                placeholder="Masukkan password"
-                value={formData.password}
-                onChange={handleChange}
-              />
-            </div>
+        <form className="space-y-5" onSubmit={handleSubmit}>
+          <div>
+            <label htmlFor="email" className="block mb-1 font-medium text-gray-700">
+              Email
+            </label>
+            <input
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+              type="email"
+              name="email"
+              id="email"
+              placeholder="contoh@email.com"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
 
-            <button
-              type="submit"
-              className="w-full bg-blue-600 p-3 rounded-md text-white uppercase font-semibold hover:bg-blue-700 transition"
-            >
-              {localLoading || loading ? "...loading" : "login"}
-            </button>
-            {error && <p>{error}</p>}
-            <p className="text-center">
-              Anda belum mempunyai Akun?
-              <Link to="/register" className="text-blue-500">
-                {" "}
-                Regsiter
-              </Link>
-            </p>
-          </form>
-        </div>
+          <div>
+            <label htmlFor="password" className="block mb-1 font-medium text-gray-700">
+              Password
+            </label>
+            <input
+              className="w-full border border-gray-300 rounded-md p-3 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition"
+              type="password"
+              name="password"
+              id="password"
+              placeholder="••••••••"
+              value={formData.password}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-lg font-semibold tracking-wide transition-all duration-300"
+          >
+            {localLoading || loading ? "Loading..." : "Login"}
+          </button>
+
+          {error && (
+            <p className="text-red-500 text-sm text-center">{error}</p>
+          )}
+
+          <p className="text-sm text-center text-gray-600">
+            Belum punya akun?
+            <Link to="/register" className="text-blue-500 hover:underline ml-1">
+              Daftar Sekarang
+            </Link>
+          </p>
+        </form>
       </div>
     </div>
-  );
+  </div>
+);
+
 }
 
 export default LoginPage;

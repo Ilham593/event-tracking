@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import LoginPage from "../features/auth/components/LoginPage";
 import Register from "../features/auth/components/RegisterPage";
 import ProfilePage from "../features/profile/components/profilePage";
+import EventDetail from "../features/events/components/EventDetail";
 export const router = createBrowserRouter([
   {
     path: "/login",
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "profile",
         element: <ProfilePage />,
+      },
+      {
+        path: "event/:id",
+        element: <EventDetail />,
       },
     ],
   },
