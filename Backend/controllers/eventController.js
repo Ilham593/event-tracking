@@ -1,44 +1,76 @@
+import mongoose, { mongo } from "mongoose";
 import Event from "../models/Event.js";
 
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await Event.find();
+    //urut dari yang paling baru
+    const events = await Event.find({ date: { $gte: new Date() } })
+      .sort({ date: 1 })
+      .select("-__v");
 
     // selalu kirim array, meskipun kosong
     res.status(200).json(events);
   } catch (err) {
-    res.status(500).json({ msg: "gagal mengambil data", error: err.message });
+    res
+      .status(500)
+      .json({ msg: "terjadi kesalahan server", error: err.message });
   }
 };
 
 export const getEventDetail = async (req, res) => {
   try {
     const id = req.params.id;
-    const event = await Event.findById(id);
-    if (!event) {
-      return res.status(404).json({ msg: "id tidak di temukan" });
+
+    // Validasi ID terlebih dahulu
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ msg: "ID tidak valid" });
     }
 
-    res.json(event);
+    // Cari event berdasarkan ID dan buang field __v
+    const event = await Event.findById(id).select("-__v");
+
+    if (!event) {
+      return res.status(404).json({ msg: "event tidak di temukan" });
+    }
+
+    res.status(200).json({
+      event,
+    });
   } catch (err) {
-    res.status(500).json({ msg: "gagal mendapatkan data", error: err.message });
+    res
+      .status(500)
+      .json({ msg: "gagal mendapatkan data event", error: err.message });
   }
 };
 
 // admin
 export const createEvent = async (req, res) => {
   try {
-    const role = req.user.role;
     const { title, description, date, location, price, quota, image } =
       req.body;
 
-    if (role !== "admin") {
+    if (
+      !title ||
+      !description ||
+      !date ||
+      !location ||
+      !price ||
+      !quota ||
+      !image
+    ) {
       return res.status(400).json({
-        msg: "anda bukan admin",
+        msg: "Semua field wajib diisi!",
       });
     }
 
-    const postevent = await Event.create({
+    const eventExist = await Event.findOne({ title, date });
+    if (eventExist) {
+      return res.status(409).json({
+        msg: "event dengan judul dan date ini sudah ada",
+      });
+    }
+
+    const newEvent = await Event.create({
       title,
       description,
       date,
@@ -49,50 +81,68 @@ export const createEvent = async (req, res) => {
     });
 
     res.status(201).json({
-      msg: 'berhasi di buat',
-      postevent
-    })
+      msg: "berhasil di buat",
+      newEvent,
+    });
   } catch (err) {
-    res.status(500).json({ msg: "failed", error: err.message });
+    res
+      .status(500)
+      .json({ msg: "terjadi kesalahan server", error: err.message });
   }
 };
 
 export const updateEvent = async (req, res) => {
   try {
     const id = req.params.id;
-    const role = req.user.role;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        msg: "ID tidak valid",
+      });
+    }
+
     const eventExist = await Event.findById(id);
-
-    const { title, description, date, location, price, quota, image } =
-      req.body;
-
     if (!eventExist) {
       return res.status(404).json({ msg: "event tidak ditemukan" });
     }
 
-    if (role !== "admin") {
-      return res.status(400).json({
-        msg: "maaf anda bukan admin dan tidak berhak mengedit ini",
-      });
+    const {
+      title = "",
+      description = "",
+      date,
+      location = "",
+      price,
+      quota,
+      image,
+    } = req.body;
+
+    if (!title.trim() || !description.trim() || !location.trim() || !date) {
+      return res.status(400).json({ msg: "Field wajib tidak boleh kosong" });
     }
 
-    if (!title || !description || !date || !location) {
-      return res.status(400).json({ msg: "field wajib tidak boleh kosong" });
-    }
-
-    const updateEvent = await Event.findByIdAndUpdate(
+    // Update data
+    const updated = await Event.findByIdAndUpdate(
       id,
-      { title, description, date, location, price, quota, image },
-      { new: true }
+      {
+        title: title.trim(),
+        description: description.trim(),
+        date,
+        location: location.trim(),
+        price,
+        quota,
+        image,
+      },
+      // biar updated langusgn keliatan
+      { new: true, runValidators: true }
     );
 
-    res.status(201).json({
-      updateEvent,
+    res.status(200).json({
+      updated,
       msg: "event berhasil di update",
     });
   } catch (err) {
     res.status(500).json({
-      msg: "gagal",
+      msg: "terjadi kesalahan server",
       error: err.message,
     });
   }
@@ -101,30 +151,29 @@ export const updateEvent = async (req, res) => {
 export const deleteEvent = async (req, res) => {
   try {
     const id = req.params.id;
-    const role = req.user.role;
-    const event = await Event.findById(id);
 
-    if (!event) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({
-        msg: "event tidak di temukan",
+        msg: "ID tidak valid",
       });
     }
 
-    if (role !== "admin") {
-      return res.status(400).json({
-        msg: "anda bukan admin",
+    const event = await Event.findById(id);
+    if (!event) {
+      return res.status(404).json({
+        msg: "event tidak di temukan",
       });
     }
 
     const deletedEvent = await Event.findByIdAndDelete(id);
 
-    res.json({
-      msg: "event berhasil di hapus",
-      deleteEvent,
+    res.status(200).json({
+      msg: "Event berhasil di hapus",
+      deletedEvent,
     });
   } catch (err) {
     res.status(500).json({
-      msg: "gagal menghapus event",
+      msg: "terjadi kesalahan server",
       error: err.message,
     });
   }

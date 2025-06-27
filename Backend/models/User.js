@@ -11,12 +11,14 @@ const UserSchema = new Schema(
     email: {
       type: String,
       required: true,
-      uniqe: true
+      unique: true,
+      match: [/^\S+@\S+\.\S+$/, "Format email tidak valid"],
     },
 
     password: {
       type: String,
       required: true,
+      minlength: 6,
     },
     role: {
       type: String,
@@ -30,6 +32,7 @@ const UserSchema = new Schema(
   }
 );
 
-// membuat modeluser
-const User = mongoose.model("User", UserSchema);
+// unutk mencegah terdaftar 2 kali
+// Membuat model User dan mengekspornya
+const User = mongoose.model.User || mongoose.model("Usre", UserSchema);
 export default User;

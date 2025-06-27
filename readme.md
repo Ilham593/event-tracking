@@ -129,16 +129,13 @@ Authorization: Bearer <your_token>
 {
   title: String,
   description: String,
-  location: String,
   date: Date,
-  ticketTypes: [
-    {
-      type: String,   // VIP, Reguler
-      price: Number,
-      stock: Number
-    }
-  ]
+  location: String,
+  price: Number,
+  quota: Number,
+  image: String
 }
+
 ```
 
 ### 🔹 Order
@@ -174,22 +171,10 @@ Untuk deploy ke Render:
 
 ## 🧑‍💻 Author
 
-Made with ❤️ by \[Your Name]
-Twitter / GitHub: `@yourusername`
+Made with ❤️ by \[ilham593]
 
 ---
 
 ## 📃 Lisensi
 
 MIT License
-
-```
-
----
-
-Kalau kamu mau, aku bisa bantu juga:
-- Buatkan repo GitHub + push struktur awal
-- Atau generate project backend Express + MongoDB lengkap sesuai README ini
-
-Mau lanjut ke mana dulu?
-```
