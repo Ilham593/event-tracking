@@ -6,46 +6,49 @@ Aplikasi RESTful API untuk pembelian tiket event (konser, seminar, dll) mengguna
 
 ## 📌 Fitur Utama
 
-- Register & Login User (JWT)
-- Lihat daftar event dan detail event
-- Pesan tiket sesuai tipe (VIP, Reguler)
-- Riwayat pesanan user
+* Register & Login User (JWT)
+* Lihat daftar event dan detail event
+* Pesan tiket sesuai tipe (VIP, Reguler)
+* Riwayat pesanan user
+* Validasi kuota & perhitungan total harga
+* Auto-generate QR code string (UUID)
 
 ---
 
 ## 🧰 Tech Stack
 
-- **Backend:** Node.js + Express
-- **Database:** MongoDB (Mongoose)
-- **Auth:** JWT + Bcrypt
-- **Testing:** Postman / Thunder Client
-- **Deploy:** (opsional) Render / Railway / Vercel serverless API
+* **Backend:** Node.js + Express
+* **Database:** MongoDB (Mongoose)
+* **Auth:** JWT + Bcrypt
+* **Middleware:** Helmet, Morgan, Rate Limiter
+* **Testing:** Postman / Thunder Client
+* **Deploy:** (opsional) Render / Railway / Vercel serverless API
 
 ---
 
 ## 🗂️ Struktur Proyek
 
 ```
-
 /backend
-/models          # Skema database (User, Event, Order)
-/controllers     # Logika bisnis untuk API
-/routes          # Endpoint Express
-/middleware      # JWT Auth, error handler
-/config          # Setup MongoDB
-server.js        # Entry point aplikasi
-
-````
+│
+├── /models          # Skema database (User, Event, Orders)
+├── /controllers     # Logika bisnis untuk API
+├── /routes          # Endpoint Express
+├── /middlewares     # JWT Auth, error handler, rate limiter
+├── /config          # Setup MongoDB
+├── server.js        # Entry point aplikasi
+```
 
 ---
 
 ## ⚙️ Instalasi & Setup
 
 1. **Clone repo**
+
    ```bash
    git clone ""
    cd ""
-````
+   ```
 
 2. **Install dependencies**
 
@@ -101,7 +104,7 @@ Authorization: Bearer <your_token>
 
 ---
 
-### 📦 Order
+### 📦 Orders
 
 | Method | URL            | Deskripsi          |
 | ------ | -------------- | ------------------ |
@@ -133,22 +136,25 @@ Authorization: Bearer <your_token>
   location: String,
   price: Number,
   quota: Number,
-  image: String
+  image: String,
+  createdAt: Date,
+  updatedAt: Date
 }
-
 ```
 
 ### 🔹 Order
 
 ```js
 {
-  userId: ObjectId,
-  eventId: ObjectId,
-  ticketType: String,
+  user: ObjectId (ref: "User"),
+  event: ObjectId (ref: "Event"),
+  ticketType: String ("VIP" | "Reguler"),
   quantity: Number,
   totalPrice: Number,
-  status: String, // "pending" | "paid"
-  createdAt: Date
+  qrCodeData: String,
+  status: String ("pending" | "paid"),
+  createdAt: Date,
+  updatedAt: Date
 }
 ```
 
@@ -157,6 +163,16 @@ Authorization: Bearer <your_token>
 ## 🧪 Tes API
 
 Gunakan [Postman](https://www.postman.com/) atau \[Thunder Client (VSCode)] untuk menguji endpoint. Token JWT harus disertakan untuk endpoint yang butuh autentikasi.
+
+Contoh request:
+
+```json
+{
+  "eventId": "<id_event>",
+  "ticketType": "VIP",
+  "quantity": 2
+}
+```
 
 ---
 

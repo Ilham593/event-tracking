@@ -1,47 +1,80 @@
-import Ticket from "../models/Ticket.js";
 import Event from "../models/Event.js";
-export const createTicket = async (req, res) => {
+import Orders from "../models/Orders.js";
+import { v4 as uuidv4 } from "uuid";
+import User from "../models/User.js";
+export const beliTiket = async (req, res) => {
   try {
     const userId = req.user.userId;
-    const eventId = req.body.eventId;
+    const { eventId, ticketType, quantity } = req.body;
+
+    console.log("Body request:", req.body);
+    const parsedQty = parseInt(quantity);
+
+    if (!eventId || !ticketType || isNaN(parsedQty) || parsedQty <= 0) {
+      return res
+        .status(400)
+        .json({ msg: "Data pembelian tidak lengkap atau salah" });
+    }
 
     const event = await Event.findById(eventId);
     if (!event) {
-      return res.status(400).json({ msg: "event tidak ada" });
+      return res.status(404).json({ msg: "Event tidak ditemukan" });
     }
 
-    const ticket = await Ticket.create({
+    if (event.quota < parsedQty) {
+      return res.status(400).json({ msg: "Stok tiket tidak cukup" });
+    }
+
+    const totalPrice = event.price * parsedQty;
+    const qr_code_data = uuidv4();
+
+    event.quota -= parsedQty;
+    await event.save();
+
+    const orders = await Orders.create({
       user: userId,
       event: eventId,
-      qr_code_data: "generate_qr_code_data_here",
-      purchase_date: new Date(),
+      ticketType,
+      quantity: parsedQty,
+      totalPrice,
+      qrCodeData: qr_code_data,
+      status: "paid",
     });
 
     res.status(201).json({
-      msg: "tiket berhasil di beli",
-      ticket,
+      msg: "Tiket berhasil dibeli",
+      orders,
     });
   } catch (err) {
-    res.status(500).json({ msg: "gagal memembeli", error: err.message });
+    res
+      .status(500)
+      .json({ msg: "Terjadi kesalahan server", error: err.message });
   }
 };
 
 export const getMyTickets = async (req, res) => {
   try {
-    const tickets = await Ticket.find({ user: req.user.userId })
+    const userId = req.user.userId;
+
+    const myTicket = await Orders.find({ user: userId })
       .populate("event")
       .populate("user");
 
-    if (tickets.length === 0) {
-      return res.status(404).json({
-        msg: "maaf anda belum ada membeli tiket",
+    if (myTicket.length === 0) {
+      return res.status(400).json({
+        msg: "anda belum memesan tiket apapun",
       });
     }
 
-    res.json({
-      tickets,
+    res.status(200).json({
+      msg: "tiket berhasil di ambil",
+      ticket: myTicket,
     });
   } catch (err) {
-    res.status(500).json({ msg: "gagal mengambil tiket", error: err.message });
+    console.error(err);
+    res.status(500).json({
+      msg: "tejadi kesalahan server",
+      error: err.message,
+    });
   }
 };

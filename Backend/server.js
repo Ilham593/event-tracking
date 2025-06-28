@@ -8,7 +8,7 @@ import morgan from "morgan";
 import authRouter from "./routes/auth.js";
 import eventRouter from "./routes/event.js";
 import profileRouter from "./routes/profile.js";
-
+import ticketRouter from "./routes/ticket.js"
 dotenv.config();
 connectDb();
 
@@ -26,7 +26,7 @@ app.use(limiter);
 // routes
 app.use("/api", authRouter);
 app.use("/api/events", eventRouter);
-
+app.use("/api/ticket", ticketRouter)
 app.use("/api/profile", profileRouter);
 
 // Middleware untuk menangani route yang tidak ditemukan (404)
@@ -39,3 +39,9 @@ app.use((err, req, res, next) => {
   console.error("Global Error:", err.stack);
   res.status(500).json({ msg: "Kesalahan server", error: err.message });
 });
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
+

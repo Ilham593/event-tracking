@@ -34,5 +34,5 @@ const UserSchema = new Schema(
 
 // unutk mencegah terdaftar 2 kali
 // Membuat model User dan mengekspornya
-const User = mongoose.model.User || mongoose.model("Usre", UserSchema);
+const User = mongoose.models.User || mongoose.model("User", UserSchema);
 export default User;
